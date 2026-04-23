@@ -1,5 +1,6 @@
 import numpy as np
 from enum import Enum
+import random
 
 
 class backtracking():
@@ -56,22 +57,64 @@ class backtracking():
         # so this if means "are ALL neighboring cells already visited?”
 
         # logic breakdown:
-        # if all 4 directions are visited (0.5)
-        #   → you're stuck (dead end)
-        # If at least one is NOT visited
-        #   → randomly choose a direction available, and continue exploring
+        # 1. From current cell → try random directions
+        # 2. If a neighbor hasn’t been visited →
+        #   break the wall
+        #   move there (recursively)
+        # 3. If all neighbors visited → stop (backtrack)
         if (grid[coord_y - 2, coord_x] == 0.5 and grid[coord_y + 2, coord_x]
            == 0.5 and grid[coord_y, coord_x - 2] == 0.5
            and grid[coord_y, coord_x + 2] == 0.5):
             pass
+        # explore:
         else:
-            pass
+            # create direction list
+            li = [1, 2, 3, 4]
+            # Picks a random direction
+            # Removes it so it won't be tried again
+            while len(li) > 0:
+                dir = random.choice(li)
+                li.remove(dir)
+
+                # Convert direction into movement
+                if dir == Directions.UP.value:
+                    next_cell_x = coord_x
+                    middle_cell_x = coord_x
+                    next_cell_y = coord_y - 2
+                    middle_cell_y = coord_y - 1
+                elif dir == Directions.DOWN.value:
+                    next_cell_x = coord_x
+                    middle_cell_x = coord_x
+                    next_cell_y = coord_y + 2
+                    middle_cell_y = coord_y + 1
+                elif dir == Directions.LEFT.value:
+                    next_cell_x = coord_x - 2
+                    middle_cell_x = coord_x - 1
+                    next_cell_y = coord_y
+                    middle_cell_y = coord_y
+                elif dir == Directions.RIGHT.value:
+                    next_cell_x = coord_x + 2
+                    middle_cell_x = coord_x + 1
+                    next_cell_y = coord_y
+                    middle_cell_y = coord_y
+                else:
+                    next_cell_x = coord_x
+                    middle_cell_x = coord_x
+                    next_cell_y = coord_y
+                    middle_cell_y = coord_y
+
+                # checks if the next cell 
+                if grid[next_cell_y, next_cell_x] != 0.5:
+                    grid[middle_cell_y, middle_cell_x] = 0.5
+                    self.generator(next_cell_x, next_cell_y, grid)
 
     def add_42_maze(self):
         current_maze = self.generate()
         print(f"{current_maze}")
 
 
+# remembering which number is up, and which one is down isn’t optimal
+# Instead, we will use enums to save the directions.
 class Directions(Enum):
     UP = 1
     DOWN = 2
