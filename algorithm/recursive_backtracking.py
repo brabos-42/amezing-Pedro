@@ -1,4 +1,5 @@
 import numpy as np
+from enum import Enum
 
 
 class backtracking():
@@ -46,11 +47,29 @@ class backtracking():
                     maze[i, j] = 0
 
     def generate(self, coord_x, coord_y, grid):
+        # mark the current cell as visited
         grid[coord_y, coord_x] = 0.5
 
+        # these are the equivalent to UP DOWN LEFT RIGHT
+        # but we skip one cell because of the structure
+        # of our grid    ->   Cell   Wall   Cell
+        # so this if means "are ALL neighboring cells already visited?”
+
+        # logic breakdown:
+        # if all 4 directions are visited (0.5)
+        #   → you're stuck (dead end)
+        # If at least one is NOT visited
+        #   → randomly choose a direction available, and continue exploring
         if (grid[coord_y - 2, coord_x] == 0.5 and grid[coord_y + 2, coord_x]
            == 0.5 and grid[coord_y, coord_x - 2] == 0.5
            and grid[coord_y, coord_x + 2] == 0.5):
             pass
         else:
             pass
+
+
+class Directions(Enum):
+    UP = 1
+    DOWN = 2
+    LEFT = 3
+    RIGHT = 4
