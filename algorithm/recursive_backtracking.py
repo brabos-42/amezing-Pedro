@@ -40,6 +40,17 @@ class backtracking():
                 # creator wont go past it                0.5  0   1   0  0.5
                 #                                        0.5  0   0   0  0.5
                 #                                        0.5 0.5 0.5 0.5 0.5
-                if (i == 0 or j == 0 or i == self.height - 1 or j == self.width - 1):
+                if (i == 0 or j == 0
+                   or i == self.height - 1 or j == self.width - 1):
                     maze[i, j] = 0.5  # visited
                     maze[i, j] = 0
+
+    def generate(self, coord_x, coord_y, grid):
+        grid[coord_y, coord_x] = 0.5
+
+        if (grid[coord_y - 2, coord_x] == 0.5 and grid[coord_y + 2, coord_x]
+           == 0.5 and grid[coord_y, coord_x - 2] == 0.5
+           and grid[coord_y, coord_x + 2] == 0.5):
+            pass
+        else:
+            pass
