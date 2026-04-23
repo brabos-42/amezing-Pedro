@@ -3,7 +3,7 @@ from enum import Enum
 
 
 class backtracking():
-    def __init__(self, width, height, path):
+    def __init__(self, width: int, height: int, path: str):
         # adjust the width and height for the grid
         # if the size is even the mesh would turn broken ending in path
         # instead of wall so we create a 'invisible layer'
