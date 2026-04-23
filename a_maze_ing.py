@@ -1,6 +1,14 @@
 import sys
 from utils.read_configuration import read_configuration
-# from algorithm.recursive_backtracking import backtracking
+from dataclasses import dataclass
+from algorithm.recursive_backtracking import backtracking
+
+
+@dataclass
+class ValuesConfg:
+    width: int
+    height: int
+    path: bool
 
 
 def main() -> None:
@@ -10,6 +18,15 @@ def main() -> None:
         return
     values_config = read_configuration(sys.argv[1])
     print(f"{values_config} valores")
+    if values_config is None:
+        return None
+    ValuesConfg(
+        width=int(values_config["WIDTH"]),
+        height=int(values_config["HEIGHT"]),
+        path=bool(values_config["PERFECT"])
+    )
+    test = backtracking(ValuesConfg.width, ValuesConfg.height, path="")
+    test.create_maze()
 
 
 if __name__ == "__main__":
