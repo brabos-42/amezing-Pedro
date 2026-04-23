@@ -2,7 +2,7 @@ import sys
 from .is_valid_keys import is_valid_keys
 
 
-def read_configuration(path: str) -> dict[str, str] | None:
+def read_configuration(path: str) -> dict[str, str]:
     configuration: dict[str, str] = {}
     try:
         with open(path, "r") as file:
@@ -18,8 +18,8 @@ def read_configuration(path: str) -> dict[str, str] | None:
                 configuration[key] = value
         if (not is_valid_keys(configuration)):
             print("Not has all atributes mandatorys")
-            return None
+            sys.exit()
         return (configuration)
     except FileNotFoundError:
         print("Erro open the file")
-        return None
+        sys.exit()
