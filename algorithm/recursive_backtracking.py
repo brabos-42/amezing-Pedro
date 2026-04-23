@@ -3,7 +3,7 @@ import numpy as np
 
 
 class backtracking():
-    def __init__(self, width, height, path):
+    def __init__(self, width: int, height: int, path: str):
         self.width = width
         self.height = height
         self.path = path
