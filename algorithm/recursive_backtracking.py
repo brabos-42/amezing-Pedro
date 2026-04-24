@@ -16,6 +16,7 @@ class backtracking():
         self.width = width
         self.height = height
         self.path = path
+        self.maze: np.ndarray | None = None
 
     # creates the base of the maze, the mesh
     # cell types:
@@ -46,6 +47,7 @@ class backtracking():
                    or i == self.height - 1 or j == self.width - 1):
                     maze[i, j] = 0.5  # visited
                     maze[i, j] = 0
+        self.maze = maze
 
     def generate(self, coord_x, coord_y, grid):
         # mark the current cell as visited
@@ -103,14 +105,28 @@ class backtracking():
                     next_cell_y = coord_y
                     middle_cell_y = coord_y
 
-                # checks if the next cell 
+                # checks if the next cell
                 if grid[next_cell_y, next_cell_x] != 0.5:
                     grid[middle_cell_y, middle_cell_x] = 0.5
-                    self.generator(next_cell_x, next_cell_y, grid)
+                    self.generate(next_cell_x, next_cell_y, grid)
 
     def add_42_maze(self):
-        current_maze = self.generate()
-        print(f"{current_maze}")
+        if (self.maze is not None):
+            coord_x = self.width // 2
+            coord_y = self.height // 2
+            offsets: list[tuple[float, float]] = [
+                (-2, -3),
+                (-1, -3),
+                (0, -3),
+                (0, -2),
+                (0, -1),
+                (1, -1),
+                (2, -1),
+            ]
+            for dy, dx in offsets:
+                self.maze[coord_y + dy, coord_x + dx] = 0.5
+            print(f"célula: [{coord_y - 2}, {coord_x + 3}]")
+            print(f"{self.maze} \n")
 
 
 # remembering which number is up, and which one is down isn’t optimal

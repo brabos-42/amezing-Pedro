@@ -9,7 +9,7 @@ the use with the batter usebility
 Ex: Before DataClass
     values_config["<NameProp>"]
 after DataClass
-    ValuesConfig.<nameProp>
+    values_config.<nameProp>
 """
 
 
@@ -29,13 +29,17 @@ def main() -> None:
     # This function get and return a Dict with the configs
     values_config = read_configuration(sys.argv[1])
     # Use the ValueConfig class
-    ValuesConfg(
+    values_config = ValuesConfg(
         width=int(values_config["WIDTH"]),
         height=int(values_config["HEIGHT"]),
         path=bool(values_config["PERFECT"])
     )
-    test = backtracking(ValuesConfg.width, ValuesConfg.height, path="")
+    test = backtracking(values_config.width,
+                        values_config.height,
+                        values_config.path)
     test.create_maze()
+    print(f"{test.maze}! \n")
+    test.add_42_maze()
 
 
 if __name__ == "__main__":
