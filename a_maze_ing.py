@@ -17,26 +17,25 @@ after DataClass
 class ValuesConfg:
     width: int
     height: int
-    path: bool
+    path: str
 
 
 def main() -> None:
     # create the variable for to receiver values the file config
-    values_config: dict[str, str]
     if (len(sys.argv) != 2):
         print("Error need the file for generate")
         return
     # This function get and return a Dict with the configs
     values_config = read_configuration(sys.argv[1])
     # Use the ValueConfig class
-    values_config = ValuesConfg(
+    valuesReceiver = ValuesConfg(
         width=int(values_config["WIDTH"]),
         height=int(values_config["HEIGHT"]),
-        path=bool(values_config["PERFECT"])
+        path=str(values_config["PERFECT"]),
     )
-    test = backtracking(values_config.width,
-                        values_config.height,
-                        values_config.path)
+    test = backtracking(valuesReceiver.width,
+                        valuesReceiver.height,
+                        valuesReceiver.path)
     test.create_maze()
     print(f"{test.maze}! \n")
     test.add_42_maze()
