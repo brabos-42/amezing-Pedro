@@ -1,7 +1,7 @@
 import numpy as np
 from enum import Enum
 import random
-import cv2
+import cv2  # type: ignore
 
 
 class backtracking():
