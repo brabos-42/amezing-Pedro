@@ -47,43 +47,10 @@ class backtracking():
                 if (i == 0 or j == 0
                    or i == self.height - 1 or j == self.width - 1):
                     maze[i, j] = 0.5  # visited
+                    maze[i, j] = 0
         self.maze = maze
-        self.add_42_maze()
-        # select from [2, 4, 6, ...] which is guaranteed to be unvisited
-        # to choose a starting point
-        # Only even indices are valid “cells”
-        # 0 and width-1 are borders so we start at 2
-        sx = random.choice(range(2, self.width - 2, 2))
-        sy = random.choice(range(2, self.height - 2, 2))
 
-        self.generator(sx, sy, maze)
-        # cleanup step at the end of the algorithm
-        # Anywhere I see 0.5 (visited), turn it into 1 (wall)
-        #   Before: 0.5 0.5 0.5 0.5 0.5       After: 1 1 1 1 1
-        #           0.5 0   0.5 0   0.5              1 0 1 0 1
-        #           0.5 0   0.5 0   0.5              1 0 1 0 1
-        #           0.5 0   0   0   0.5              1 0 0 0 1
-        #           0.5 0.5 0.5 0.5 0.5              1 1 1 1 1
-        for i in range(self.height):
-            for j in range(self.width):
-                if maze[i, j] == 0.5:
-                    if (i == 0 or j == 0 or
-                       i == self.height - 1 or j == self.width - 1):
-                        maze[i, j] = 0   # keep borders as walls
-                else:
-                    maze[i, j] = 1   # internal visited → path
-        # set entry and exit of the maze
-        # !! we need to change it to the parameters they give
-        maze[1, 2] = 0.5
-        maze[self.height - 2, self.width - 3] = 0.5
-        # save the maze!
-        # makes it into an immage
-        # 0 -> black pixels
-        # 1 becomes 255 -> white pixels
-        maze = (maze * 255).astype('uint8')
-        cv2.imwrite(self.path, maze)
-
-    def generator(self, coord_x, coord_y, grid):
+    def generate(self, coord_x, coord_y, grid):
         # mark the current cell as visited
         grid[coord_y, coord_x] = 0.5
 
@@ -140,14 +107,10 @@ class backtracking():
                     next_cell_y = coord_y
                     middle_cell_y = coord_y
 
-                # checks if the next cell is unvisited
-                if (0 <= next_cell_x < self.width and
-                   0 <= next_cell_y < self.height and
-                   grid[next_cell_y, next_cell_x] != 0.5):
-                    # breaks the wall
+                # checks if the next cell
+                if grid[next_cell_y, next_cell_x] != 0.5:
                     grid[middle_cell_y, middle_cell_x] = 0.5
-                    # moves recursively
-                    self.generator(next_cell_x, next_cell_y, grid)
+                    self.generate(next_cell_x, next_cell_y, grid)
 
     def is_visited(self, x, y, grid):
         if 0 <= y < self.height and 0 <= x < self.width:
