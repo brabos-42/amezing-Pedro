@@ -16,7 +16,7 @@ class backtracking():
 
         self.width = width
         self.height = height
-        self.path = path
+        self.path = "path.jpg"
         self.maze: np.ndarray | None = None
 
     # creates the base of the maze, the mesh
@@ -48,6 +48,7 @@ class backtracking():
                    or i == self.height - 1 or j == self.width - 1):
                     maze[i, j] = 0.5  # visited
         self.maze = maze
+        self.add_42_maze()
         # select from [2, 4, 6, ...] which is guaranteed to be unvisited
         # to choose a starting point
         # Only even indices are valid “cells”
@@ -66,16 +67,20 @@ class backtracking():
         for i in range(self.height):
             for j in range(self.width):
                 if maze[i, j] == 0.5:
-                    maze[i, j] = 1
+                    if (i == 0 or j == 0 or
+                       i == self.height - 1 or j == self.width - 1):
+                        maze[i, j] = 0   # keep borders as walls
+                else:
+                    maze[i, j] = 1   # internal visited → path
         # set entry and exit of the maze
         # !! we need to change it to the parameters they give
-        maze[1, 2] = 1
-        maze[self.height - 2, self.width - 3] = 1
+        maze[1, 2] = 0.5
+        maze[self.height - 2, self.width - 3] = 0.5
         # save the maze!
         # makes it into an immage
         # 0 -> black pixels
         # 1 becomes 255 -> white pixels
-        maze = maze * 255.0
+        maze = (maze * 255).astype('uint8')
         cv2.imwrite(self.path, maze)
 
     def generator(self, coord_x, coord_y, grid):
@@ -93,10 +98,11 @@ class backtracking():
         #   break the wall
         #   move there (recursively)
         # 3. If all neighbors visited → stop (backtrack)
-        if (grid[coord_y - 2, coord_x] == 0.5 and grid[coord_y + 2, coord_x]
-           == 0.5 and grid[coord_y, coord_x - 2] == 0.5
-           and grid[coord_y, coord_x + 2] == 0.5):
-            pass
+        if (self.is_visited(coord_x, coord_y - 2, grid) and
+           self.is_visited(coord_x, coord_y + 2, grid) and
+           self.is_visited(coord_x - 2, coord_y, grid) and
+           self.is_visited(coord_x + 2, coord_y, grid)):
+            return
         # explore:
         else:
             # create direction list
@@ -135,11 +141,18 @@ class backtracking():
                     middle_cell_y = coord_y
 
                 # checks if the next cell is unvisited
-                if grid[next_cell_y, next_cell_x] != 0.5:
+                if (0 <= next_cell_x < self.width and
+                   0 <= next_cell_y < self.height and
+                   grid[next_cell_y, next_cell_x] != 0.5):
                     # breaks the wall
                     grid[middle_cell_y, middle_cell_x] = 0.5
                     # moves recursively
-                    self.generate(next_cell_x, next_cell_y, grid)
+                    self.generator(next_cell_x, next_cell_y, grid)
+
+    def is_visited(self, x, y, grid):
+        if 0 <= y < self.height and 0 <= x < self.width:
+            return grid[y, x] == 0.5
+        return True  # treat out-of-bounds as visited
 
     def add_42_maze(self) -> None:
         if (self.maze is not None):
@@ -155,7 +168,7 @@ class backtracking():
                 (2, -1),
             ]
             for dy, dx in offsets:
-                self.maze[coord_y + dy, coord_x + dx] = 0.5
+                self.maze[coord_y + dy, coord_x + dx] = 0
             print(f"célula: [{coord_y - 2}, {coord_x + 3}]")
             print(f"{self.maze} \n")
 

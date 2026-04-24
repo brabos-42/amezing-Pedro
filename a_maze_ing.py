@@ -38,7 +38,6 @@ def main() -> None:
                         valuesReceiver.path)
     test.create_maze()
     print(f"{test.maze}! \n")
-    test.add_42_maze()
 
 
 if __name__ == "__main__":
