@@ -1,8 +1,6 @@
 import numpy as np
 from enum import Enum
 import random
-import cv2
-import sys
 
 
 class backtracking():
@@ -29,6 +27,10 @@ class backtracking():
         print("MESH BEFORE\n")
         print(self.maze)
         print("\n")
+        self.generate(1, 1, self.maze)
+        print("MESH AFTER\n")
+        print(self.maze)
+        print("\n")
 
     def generate(self, coord_x, coord_y, grid):
         grid[coord_y, coord_x] = 0.5
@@ -36,7 +38,7 @@ class backtracking():
            self.is_visited(coord_x, coord_y + 2, grid) and
            self.is_visited(coord_x - 2, coord_y, grid) and
            self.is_visited(coord_x + 2, coord_y, grid)):
-            return
+            pass
         else:
             li = [1, 2, 3, 4]
             while len(li) > 0:
@@ -69,12 +71,14 @@ class backtracking():
                     next_cell_y = coord_y
                     middle_cell_y = coord_y
 
-                if grid[next_cell_y, next_cell_x] != 0.5:
-                    grid[middle_cell_y, middle_cell_x] = 0.5
+                if (0 <= next_cell_x < self.width and
+                   0 <= next_cell_y < self.height and
+                   grid[next_cell_y, next_cell_x] != 0.5):
+                    grid[middle_cell_y, middle_cell_x] = 0
                     self.generate(next_cell_x, next_cell_y, grid)
 
     def is_visited(self, x, y, grid):
-        if 0 <= y < self.height and 0 <= x < self.width:
+        if 0 < y < self.height and 0 < x < self.width:
             return grid[y, x] == 0.5
         return True
 
@@ -104,8 +108,6 @@ class backtracking():
             ]
             for dy, dx in offsets:
                 self.maze[coord_y + dy, coord_x + dx] = 2
-            print(f"célula: [{coord_y - 2}, {coord_x + 3}]")
-            print(f"{self.maze} \n")
 
 
 class Directions(Enum):
