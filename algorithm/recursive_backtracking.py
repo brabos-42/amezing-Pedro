@@ -1,9 +1,10 @@
 import numpy as np
 from enum import Enum
 import random
+from utils import Cell
 
 
-class backtracking():
+class backtracking(Cell):
     def __init__(self, width: int, height: int, path):
         width = (width * 2) + 1
         height = (height * 2) + 1
@@ -11,6 +12,7 @@ class backtracking():
         self.width = width
         self.height = height
         self.path = path
+        self._cell = Cell(1, 1, 1, 1, 1)
 
     def create_maze(self):
         maze = np.zeros((self.height, self.width), dtype=np.float64)
@@ -31,6 +33,7 @@ class backtracking():
         print("MESH AFTER\n")
         print(self.maze)
         print("\n")
+        self.generate_final_maze()
 
     def generate(self, coord_x, coord_y, grid):
         grid[coord_y, coord_x] = 0.5
@@ -108,6 +111,13 @@ class backtracking():
             ]
             for dy, dx in offsets:
                 self.maze[coord_y + dy, coord_x + dx] = 2
+
+    def generate_final_maze(self):
+        for y in range(self.height):
+            for x in range(self.width):
+                valor = self.maze[y, x]
+                self._cell.set_bit_cell(1, 0, 0, 0, valor)
+                self._cell.show_type_cell()
 
 
 class Directions(Enum):
