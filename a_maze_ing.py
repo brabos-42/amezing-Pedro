@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from algorithm import backtracking
 
 """
-Add Decorator DataClasss on a Class. He help us add the propieties Class for 
+Add Decorator DataClasss on a Class. He help us add the propieties Class for
 the use with the batter usebility
 Ex: Before DataClass
     values_config["<NameProp>"]
@@ -38,12 +38,6 @@ def main() -> None:
                         valuesReceiver.path)
 
     test.create_maze()
-    # print(f"{test.maze}! \n")
-    new_cell = Cell(1, 1, 1, 1, 1)
-    print("Visualização da Célula:")
-    new_cell.show_type_cell()
-    new_cell.set_bit_cell(1, 0, 0, 0, 0)
-    new_cell.show_type_cell()
 
 
 if __name__ == "__main__":

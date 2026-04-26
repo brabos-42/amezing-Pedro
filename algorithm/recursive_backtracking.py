@@ -113,11 +113,40 @@ class backtracking(Cell):
                 self.maze[coord_y + dy, coord_x + dx] = 2
 
     def generate_final_maze(self):
+        final_output = []
+
         for y in range(self.height):
+            # cada célula tem 3 linhas
+            row_lines = ["", "", ""]
+
             for x in range(self.width):
                 valor = self.maze[y, x]
-                self._cell.set_bit_cell(1, 0, 0, 0, valor)
-                self._cell.show_type_cell()
+
+                # cria uma célula NOVA (importante!)
+                cell = Cell(1, 0, 0, 0, valor)
+                cell.create_bit_cell()
+                
+                if valor == 1:
+                    color = "\033[34m"   # parede (azul)
+                elif valor == 2:
+                    color = "\033[36m"   # 42 (ciano)
+                elif valor == 0.5:
+                    color = "\033[90m"   # visitado
+                else:
+                    color = "\033[90m"   # caminho normal
+
+                ascii_cell = cell.get_ascii_repre(wall_color=color)
+
+                # junta horizontalmente
+                for i in range(3):
+                    row_lines[i] += ascii_cell[i]
+
+            # adiciona as 3 linhas no output final
+            final_output.extend(row_lines)
+
+        # print final
+        for line in final_output:
+            print(line)
 
 
 class Directions(Enum):
