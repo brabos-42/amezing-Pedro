@@ -47,7 +47,7 @@ def main() -> None:
         exit=tuple(values_config['EXIT']),
         display_maze=parse_bool(values_config['DISPLAY_MAZE'])
     )
-    random.seed()
+    random.seed(42)
     test = backtracking(valuesReceiver.width,
                         valuesReceiver.height,
                         valuesReceiver.path,

@@ -8,6 +8,8 @@ sys.setrecursionlimit(100000000)
 
 class backtracking(Cell):
     def __init__(self, width: int, height: int, path: str, display_map: bool):
+        width *= 2
+        height *= 2
         if (width % 2 == 0):
             width += 1
         if (height % 2 == 0):
@@ -37,7 +39,8 @@ class backtracking(Cell):
             for line in maze_lines:
                 print(line)
         else:
-            pass
+            for row in self.generate_hexa_maze():
+                print(row, end="")
 
     def generate(self, coord_x, coord_y, grid):
         grid[coord_y, coord_x] = 0.5
@@ -155,6 +158,29 @@ class backtracking(Cell):
                 line += f"{color}  \033[0m"  # two spaces + reset
 
             final_output.append(line)
+
+        return final_output
+
+    def generate_hexa_maze(self):
+        final_output = []
+
+        for y in range(self.height):
+            line = ""
+
+            for x in range(self.width):
+                if x % 2 != 0 and y % 2 != 0:
+                    self._cell.set_bit_cell(
+                        self.maze[y, x - 1],
+                        self.maze[y + 1, x],
+                        self.maze[y, x + 1],
+                        self.maze[y - 1, x],
+                        1
+                    )
+
+                    line += self._cell.translate_cell()
+
+            if line != "":
+                final_output.append(line + "\n")
 
         return final_output
 
