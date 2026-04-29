@@ -25,11 +25,18 @@ class ValuesConfg:
     exit: tuple
 
 
+def entry_tuples(value: str) -> tuple[int, int]:
+    return tuple(int(x) for x in value.replace('(', '').split(','))
+
+
 def parse_bool(value: str) -> bool:
     return value.strip().lower() in ("true", "1", "yes")
 
 
 def main() -> None:
+    """
+
+    """
     # create the variable for to receiver values the file config
     if (len(sys.argv) != 2):
         print("Error need the file for generate")
@@ -37,21 +44,22 @@ def main() -> None:
     # This function get and return a Dict with the configs
     values_config = read_configuration(sys.argv[1])
     # Use the ValueConfig class
-    print(values_config)
     valuesReceiver = ValuesConfg(
         width=int(values_config["WIDTH"]),
         height=int(values_config["HEIGHT"]),
         path=str(values_config["OUTPUT_FILE"]),
         perfect=parse_bool(values_config['PERFECT']),
-        entry=tuple(values_config['ENTRY']),
-        exit=tuple(values_config['EXIT']),
+        entry=entry_tuples(values_config['ENTRY']),
+        exit=entry_tuples(values_config['EXIT']),
         display_maze=parse_bool(values_config['DISPLAY_MAZE'])
     )
     random.seed()
     test = backtracking(valuesReceiver.width,
                         valuesReceiver.height,
                         valuesReceiver.path,
-                        valuesReceiver.display_maze)
+                        valuesReceiver.display_maze,
+                        valuesReceiver.entry,
+                        valuesReceiver.entry)
 
     test.create_maze()
 

@@ -7,7 +7,13 @@ sys.setrecursionlimit(100000000)
 
 
 class backtracking(Cell):
-    def __init__(self, width: int, height: int, path: str, display_map: bool):
+    def __init__(self,
+                 width: int,
+                 height: int,
+                 path: str,
+                 display_map: bool,
+                 entry: tuple,
+                 exit: tuple):
         if (width % 2 == 0):
             width += 1
         if (height % 2 == 0):
@@ -17,6 +23,8 @@ class backtracking(Cell):
         self.height = height
         self.path = path
         self.display_map = display_map
+        self.entry = entry
+        self.exit = exit
         self._cell = Cell(1, 1, 1, 1, 1)
 
     def create_maze(self):
@@ -31,6 +39,7 @@ class backtracking(Cell):
                     maze[i, j] = 1
         self.maze = maze
         self.add_42_maze()
+        self._is_valid_position_set(self.exit)
         self.generate(1, 1, self.maze)
         if (self.display_map):
             maze_lines = self.generate_final_maze()
@@ -148,15 +157,24 @@ class backtracking(Cell):
                     color = "\033[48;2;118;68;98m"
                 elif valor == 0.5:
                     color = "\033[48;2;44;33;55m"
+                elif valor == 3:
+                    color = "\033[48;2;169;104;104m"
                 else:
                     color = "\033[48;2;44;33;55m"
                 # color for entry and exit or path idk "\033[48;2;169;104;104m"
-
                 line += f"{color}  \033[0m"  # two spaces + reset
 
             final_output.append(line)
 
         return final_output
+
+    def _is_valid_position_set(self, position: tuple[int, int]) -> bool:
+        y , x  = position
+        if (self.maze[y, x]):
+            print(self.maze[y, x])
+            self.maze[y, x] = 3
+            return True
+        return False
 
 
 class Directions(Enum):

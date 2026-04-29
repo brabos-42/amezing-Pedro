@@ -56,7 +56,7 @@ class Cell():
             value += 8  # Bit 3
 
         return hex(value)[2:].upper()
-    
+
     def get_ascii_repre(self, wall_color: str = "\033[0m") -> list[str]:
         reset = "\033[0m"
         block = "\u2588\u2588\u2588"  # ███ws
