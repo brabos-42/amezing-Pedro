@@ -174,6 +174,7 @@ class backtracking(Cell):
         if (self.maze[y, x]):
             print(self.maze[y, x])
             self.maze[y, x] = 3
+            print(self.maze[y, x])
             return True
         return False
 
