@@ -1,10 +1,10 @@
 class Cell():
     def __init__(self,
-                west: int,
-                south: int,
-                east: int,
-                north: int,
-                type: int):
+                 west: int,
+                 south: int,
+                 east: int,
+                 north: int,
+                 type: int):
         self._west: int = west
         self._south: int = south
         self._east: int = east
@@ -27,11 +27,11 @@ class Cell():
             self._bit_cell[self._west, self._south, self._east, self._north]
 
     def set_bit_cell(self,
-                    west: int,
-                    south: int,
-                    east: int,
-                    north: int,
-                    type: int):
+                     west: int,
+                     south: int,
+                     east: int,
+                     north: int,
+                     type: int):
 
         self._west = west
         self._south = south
@@ -63,7 +63,6 @@ class Cell():
             value += 2  # Bit 2
         if self._north:
             value += 1  # Bit 3
-
         return hex(value)[2:].upper()
 
     def get_ascii_repre(self, wall_color: str = "\033[0m") -> list[str]:

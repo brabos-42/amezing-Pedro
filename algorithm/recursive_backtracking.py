@@ -170,7 +170,7 @@ class backtracking(Cell):
         return final_output
 
     def _is_valid_position_set(self, position: tuple[int, int]) -> bool:
-        y , x  = position
+        y, x  = position
         if (self.maze[y, x]):
             print(self.maze[y, x])
             self.maze[y, x] = 3
