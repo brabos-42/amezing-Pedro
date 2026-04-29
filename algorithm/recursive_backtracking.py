@@ -40,6 +40,7 @@ class backtracking(Cell):
         self.maze = maze
         self.add_42_maze()
         self._is_valid_position_set(self.exit)
+        self.generate(1, 1, self.maze)
         if (self.display_map):
             maze_lines = self.generate_final_maze()
             for line in maze_lines:
@@ -169,7 +170,7 @@ class backtracking(Cell):
         return final_output
 
     def _is_valid_position_set(self, position: tuple[int, int]) -> bool:
-        y, x = position
+        y, x  = position
         if (self.maze[y, x]):
             print(self.maze[y, x])
             self.maze[y, x] = 3
