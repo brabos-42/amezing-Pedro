@@ -46,7 +46,8 @@ class backtracking(Cell):
             for line in maze_lines:
                 print(line)
         else:
-            pass
+            for row in self.generate_hexa_maze():
+                print(row, end="")
 
     def generate(self, coord_x, coord_y, grid):
         grid[coord_y, coord_x] = 0.5
@@ -175,6 +176,29 @@ class backtracking(Cell):
             self.maze[y, x] = 3
             return True
         return False
+
+    def generate_hexa_maze(self):
+        final_output = []
+
+        for y in range(self.height):
+            line = ""
+
+            for x in range(self.width):
+                if x % 2 != 0 and y % 2 != 0:
+                    self._cell.set_bit_cell(
+                        self.maze[y, x - 1],
+                        self.maze[y + 1, x],
+                        self.maze[y, x + 1],
+                        self.maze[y - 1, x],
+                        1
+                    )
+
+                    line += self._cell.translate_cell()
+
+            if line != "":
+                final_output.append(line + "\n")
+
+        return final_output
 
 
 class Directions(Enum):
