@@ -33,7 +33,10 @@ def main() -> None:
     valuesReceiver = ValuesConfg(
         width=int(values_config["WIDTH"]),
         height=int(values_config["HEIGHT"]),
-        path=str(values_config["PERFECT"]),
+        path=str(values_config["OUTPUT_FILE"]),
+        perfect=bool(values_config['PERFECT']),
+        entry=tuple(values_config['ENTRY']),
+        exit=tuple(values_config['EXIT'])
     )
     random.seed()
     test = backtracking(valuesReceiver.width,
