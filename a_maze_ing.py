@@ -23,6 +23,7 @@ class ValuesConfg:
     perfect: bool
     entry: tuple
     exit: tuple
+    seed: str
 
 
 def entry_tuples(value: str) -> tuple[int, int]:
@@ -51,9 +52,14 @@ def main() -> None:
         perfect=parse_bool(values_config['PERFECT']),
         entry=entry_tuples(values_config['ENTRY']),
         exit=entry_tuples(values_config['EXIT']),
-        display_maze=parse_bool(values_config['DISPLAY_MAZE'])
+        display_maze=parse_bool(values_config['DISPLAY_MAZE']),
+        seed=str(values_config['SEED'])
     )
-    random.seed(42)
+
+    if (valuesReceiver.seed == ""):
+        random.seed()
+    else:
+        random.seed(valuesReceiver.seed)
     test = MazeGenerator(valuesReceiver.width,
                          valuesReceiver.height,
                          valuesReceiver.path,

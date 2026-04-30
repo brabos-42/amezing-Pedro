@@ -5,5 +5,5 @@ EXIT=3,2
 OUTPUT_FILE=maze.txt
 PERFECT=true
 DISPLAY_MAZE=true
-SEED=
+SEED=42
 # aqui man

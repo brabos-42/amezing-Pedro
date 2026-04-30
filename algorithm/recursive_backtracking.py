@@ -13,13 +13,14 @@ class MazeGenerator(Cell):
                  path: str,
                  display_map: bool,
                  entry: tuple,
-                 exit: tuple):
+                 exit: tuple,
+                 perfect: bool):
         width *= 2
         height *= 2
-        if (width % 2 == 0):
-            width += 1
-        if (height % 2 == 0):
-            height += 1
+        # if (width % 2 == 0):
+        #     width += 1
+        # if (height % 2 == 0):
+        #     height += 1
 
         self.width = width
         self.height = height
@@ -27,6 +28,7 @@ class MazeGenerator(Cell):
         self.display_map = display_map
         self.entry = entry
         self.exit = exit
+        self.perfect = perfect
         self._cell = Cell(1, 1, 1, 1, 1)
 
     def create_maze(self):
