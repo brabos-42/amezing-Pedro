@@ -44,10 +44,14 @@ class MazeGenerator(Cell):
         self.maze = maze
         self.add_42_maze()
         self.generate(1, 1, self.maze)
+        if (self.perfect is False):
+            self.deform_maze(1, 1, self.maze)
         if not self._is_valid_position_set(self.entry):
             print("ERROR: Entry position not available")
+            sys.exit()
         if not self._is_valid_position_set(self.exit):
             print("ERROR: Exit position not available")
+            sys.exit()
         if (self.display_map):
             maze_lines = self.generate_final_maze()
             for line in maze_lines:
@@ -113,40 +117,40 @@ class MazeGenerator(Cell):
             coord_x = self.width // 2
             coord_y = self.height // 2
             offsets: list[tuple[int, int]] = [
-                (-5, -5),
                 (-4, -5),
                 (-3, -5),
                 (-2, -5),
                 (-1, -5),
-                (-1, -4),
-                (-1, -3),
-                (-1, -2),
-                (-1, -1),
+                (0, -5),
+                (0, -4),
+                (0, -3),
+                (0, -2),
                 (0, -1),
                 (1, -1),
                 (2, -1),
                 (3, -1),
-                (-5, 1),
-                (-5, 2),
-                (-5, 3),
-                (-5, 4),
-                (-5, 5),
+                (4, -1),
+                (-4, 1),
+                (-4, 2),
+                (-4, 3),
+                (-4, 4),
                 (-4, 5),
                 (-3, 5),
                 (-2, 5),
                 (-1, 5),
-                (-1, 4),
-                (-1, 3),
-                (-1, 2),
-                (-1, 1),
+                (0, 5),
+                (0, 4),
+                (0, 3),
+                (0, 2),
                 (0, 1),
                 (1, 1),
                 (2, 1),
                 (3, 1),
-                (3, 2),
-                (3, 3),
-                (3, 4),
-                (3, 5),
+                (4, 1),
+                (4, 2),
+                (4, 3),
+                (4, 4),
+                (4, 5),
             ]
             for dy, dx in offsets:
                 self.maze[coord_y + dy, coord_x + dx] = 2
@@ -209,6 +213,13 @@ class MazeGenerator(Cell):
                 final_output.append(line + "\n")
 
         return final_output
+
+    def deform_maze(self, coord_x, coord_y, grid):
+        for coord_y in range(self.height - 2):
+            for coord_x in range(self.width - 2):
+                if (self.maze[coord_y, coord_x] == 1 and not
+                   self.maze[coord_y + 1, coord_x + 1] == 2):
+                    self.maze[coord_y + 1, coord_x + 1] = 0
 
 
 class Directions(Enum):

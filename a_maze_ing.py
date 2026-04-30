@@ -55,6 +55,9 @@ def main() -> None:
         display_maze=parse_bool(values_config['DISPLAY_MAZE']),
         seed=str(values_config['SEED'])
     )
+    if (valuesReceiver.height < 6 and valuesReceiver.width < 7):
+        print("ERROR: Map Too Small. Min is 6 x 7.")
+        sys.exit()
 
     if (valuesReceiver.seed == ""):
         random.seed()
