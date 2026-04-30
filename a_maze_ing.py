@@ -1,7 +1,7 @@
 import sys
 from utils import read_configuration
 from dataclasses import dataclass
-from algorithm import backtracking
+from algorithm import MazeGenerator
 import random
 
 """
@@ -55,17 +55,18 @@ def main() -> None:
         display_maze=parse_bool(values_config['DISPLAY_MAZE']),
         seed=str(values_config['SEED'])
     )
+
     if (valuesReceiver.seed == ""):
         random.seed()
     else:
         random.seed(valuesReceiver.seed)
-    test = backtracking(valuesReceiver.width,
-                        valuesReceiver.height,
-                        valuesReceiver.path,
-                        valuesReceiver.display_maze,
-                        valuesReceiver.entry,
-                        valuesReceiver.exit,
-                        valuesReceiver.perfect)
+    test = MazeGenerator(valuesReceiver.width,
+                         valuesReceiver.height,
+                         valuesReceiver.path,
+                         valuesReceiver.display_maze,
+                         valuesReceiver.entry,
+                         valuesReceiver.exit,
+                         valuesReceiver.perfect)
 
     test.create_maze()
 

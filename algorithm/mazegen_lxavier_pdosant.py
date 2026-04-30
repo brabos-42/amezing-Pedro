@@ -6,7 +6,7 @@ import sys
 sys.setrecursionlimit(100000000)
 
 
-class backtracking(Cell):
+class MazeGenerator(Cell):
     def __init__(self,
                  width: int,
                  height: int,
