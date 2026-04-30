@@ -1,5 +1,5 @@
 import sys
-from utils import read_configuration
+from utils import read_configuration, Solution
 from dataclasses import dataclass
 from algorithm import MazeGenerator
 import random
@@ -69,6 +69,10 @@ def main() -> None:
                          valuesReceiver.perfect)
 
     test.create_maze()
+    solution = Solution(valuesReceiver.entry, valuesReceiver.exit, test.maze)
+
+    resolution = solution.bfs_resolver()
+    print(resolution)
 
 
 if __name__ == "__main__":
