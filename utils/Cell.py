@@ -118,7 +118,6 @@ class Cell():
 
     def _set_color_wall (self, color: str) -> None:
         self._color_wall = color
-        print(color, "mano a corrr")
 
     def get_ascii_repre(self, wall_color: str = "\033[0m") -> list[str]:
         """

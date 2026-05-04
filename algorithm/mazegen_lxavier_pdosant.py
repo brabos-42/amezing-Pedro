@@ -236,7 +236,6 @@ class MazeGenerator(Cell):
             line = ""
             for x in range(self.width):
                 valor = self.maze[y, x]
-
                 if valor == 1:
                     color =  self._cell._color_wall
                 elif valor == 2:

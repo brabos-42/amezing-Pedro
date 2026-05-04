@@ -75,7 +75,6 @@ def generate_maze(valuesReceiver, seed: str):
         valuesReceiver.width,
         valuesReceiver.height,
         valuesReceiver.path,
-        valuesReceiver.display_maze,
         valuesReceiver.entry,
         valuesReceiver.exit,
         valuesReceiver.perfect
@@ -103,6 +102,10 @@ def apply_solution(gen, valuesReceiver):
 
 def display_maze(gen, maze_color):
     gen._set_color_wall(maze_color)
+    gen.generate_final_maze()
+    maze_lines = gen.generate_final_maze()
+    for line in maze_lines:
+        print(line)
     print(RESET)
 
 
