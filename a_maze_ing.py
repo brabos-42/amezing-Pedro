@@ -20,18 +20,48 @@ class ValuesConfg:
     width: int
     height: int
     path: str
-    display_maze: bool
     perfect: bool
     entry: tuple
     exit: tuple
     seed: str
+    """
+    Data container for maze configuration values.
+
+    Attributes:
+        width (int): Maze width (logical units).
+        height (int): Maze height (logical units).
+        path (str): Output file path.
+        perfect (bool): Whether to generate a perfect maze.
+        entry (tuple): Entry coordinates (row, col).
+        exit (tuple): Exit coordinates (row, col).
+        seed (str): Random seed for reproducibility.
+    """
 
 
 def entry_tuples(value: str) -> tuple[int, int]:
+    """
+    Convert a string representation of coordinates into a tuple.
+
+    Args:
+        value (str): Coordinate string in the format "(y,x)".
+
+    Returns:
+        tuple[int, int]: Parsed (y, x) coordinates.
+    """
     return tuple(int(x) for x in value.replace('(', '').split(','))
 
 
 def parse_bool(value: str) -> bool:
+    """
+    Convert a string to a boolean value.
+
+    Args:
+        value (str): Input string.
+
+    Returns:
+        bool: True if value represents a truthy string ("true", "1", "yes"),
+        False otherwise.
+    """
     return value.strip().lower() in ("true", "1", "yes")
 
 
@@ -77,6 +107,23 @@ def display_maze(gen, maze_color):
 
 
 def main() -> None:
+    """
+    Main entry point for maze generation and solving.
+
+    Workflow:
+        1. Read configuration file from command-line argument.
+        2. Parse configuration into a structured dataclass.
+        3. Validate dimensions and seed randomness.
+        4. Generate the maze.
+        5. Solve the maze using BFS.
+        6. Mark the solution path in the maze.
+        7. Print the colored maze.
+        8. Append movement directions (N, S, E, W) to the output file.
+
+    Notes:
+        - Entry and exit positions are given in logical coordinates.
+        - The solution path is written as directional steps.
+    """
     if len(sys.argv) != 2:
         print("Error need the file for generate")
         return
@@ -89,7 +136,6 @@ def main() -> None:
         perfect=parse_bool(values_config['PERFECT']),
         entry=entry_tuples(values_config['ENTRY']),
         exit=entry_tuples(values_config['EXIT']),
-        display_maze=parse_bool(values_config['DISPLAY_MAZE']),
         seed=str(values_config['SEED'])
     )
 
@@ -152,7 +198,6 @@ def main() -> None:
         elif choice == 0:
             print(f"{RESET}Quitting...")
             break
-
 
 if __name__ == "__main__":
     main()

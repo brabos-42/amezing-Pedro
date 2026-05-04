@@ -1,5 +1,18 @@
 class Solution:
     def __init__(self, entry: tuple[int, int], exit: tuple[int, int], maze):
+        """
+        Solves a maze using Breadth-First Search (BFS) to find the
+        shortest path
+        between an entry and an exit.
+
+        The maze is expected to be a grid (e.g., NumPy array) where:
+            1 -> wall
+            2 -> blocked/special cell (not traversable)
+            other values -> traversable cells
+
+        Logical coordinates (row, col) are converted to grid coordinates using:
+            (y * 2 + 1, x * 2 + 1)
+        """
         # entry/exit estão em coordenadas lógicas (linha, col)
         # mas no maze real as células são (y*2+1, x*2+1)
         ey, ex = entry
@@ -26,6 +39,26 @@ class Solution:
         return result
 
     def bfs_resolver(self) -> list[tuple[int, int]]:
+        """
+        Return accessible neighboring cells.
+
+        Movement is performed in steps of 2 (skipping walls), while checking
+        the intermediate cell to ensure there is no wall between cells.
+
+        Args:
+            y (int): Current y-coordinate.
+            x (int): Current x-coordinate.
+
+        Returns:
+            list[tuple[int, int]]: List of valid neighboring coordinates.
+
+        Notes:
+            - A move is valid if:
+                * The destination is داخل bounds.
+                * The intermediate cell (wall) is not a wall (1) or
+                blocked (2).
+                * The destination cell is not a wall (1) or blocked (2).
+        """
         from collections import deque
 
         start = self._entry

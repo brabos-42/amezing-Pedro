@@ -7,11 +7,27 @@ sys.setrecursionlimit(100000000)
 
 
 class MazeGenerator(Cell):
+    """
+    Generates and exports a maze using a recursive backtracking algorithm.
+
+    The maze is internally represented as a NumPy grid where:
+        1   -> wall
+        0   -> carved path
+        0.5 -> visited cell during generation
+        2   -> protected pattern (i.e., "42" shape)
+        3   -> entry/exit
+        4   -> reserved (unused here but supported in rendering)
+
+    The class supports:
+        - Perfect mazes (single path between any two points)
+        - Imperfect mazes (with loops via deformation)
+        - Hexadecimal encoding of maze cells
+        - Colored terminal visualization
+    """
     def __init__(self,
                  width: int,
                  height: int,
                  path: str,
-                 display_map: bool,
                  entry: tuple,
                  exit: tuple,
                  perfect: bool):
@@ -25,7 +41,6 @@ class MazeGenerator(Cell):
         self.width = width
         self.height = height
         self.path = path
-        self.display_map = display_map
         self.entry = entry
         self.exit = exit
         self.perfect = perfect
@@ -33,6 +48,18 @@ class MazeGenerator(Cell):
 
 
     def create_maze(self):
+        """
+        Create, generate, validate, and export the maze.
+
+        Steps:
+            1. Initialize grid with walls.
+            2. Insert special "42" pattern.
+            3. Generate maze paths using recursive backtracking.
+            4. Optionally deform maze to create loops.
+            5. Validate entry and exit positions.
+            6. Export hexadecimal representation to file.
+            7. Print colored maze to terminal.
+        """
         maze = np.zeros((self.height, self.width), dtype=np.float64)
 
         for i in range(self.height):
@@ -53,15 +80,37 @@ class MazeGenerator(Cell):
         if not self._is_valid_position_set(self.exit):
             print("ERROR: Exit position not available")
             sys.exit()
-        if (self.display_map):
-            maze_lines = self.generate_final_maze()
-            for line in maze_lines:
-                print(line)
-        else:
-            for row in self.generate_hexa_maze():
-                print(row, end="")
+        maze = self.generate_hexa_maze()
+        with open(self.path, "w") as f:
+            for row in maze:
+                f.write(row)
+            f.write("\n")
+            x, y = self.entry
+            f.write(f"{x},{y}")
+            f.write("\n")
+            x, y = self.exit
+            f.write(f"{x},{y}")
+            f.write("\n")
+            x, y = self.entry
+
+        maze_lines = self.generate_final_maze()
+        for line in maze_lines:
+            print(line)
 
     def generate(self, coord_x, coord_y, grid):
+        """
+        Recursively carve paths in the maze using depth-first search.
+
+        Args:
+            coord_x (int): Current x-coordinate.
+            coord_y (int): Current y-coordinate.
+            grid (np.ndarray): Maze grid.
+
+        Notes:
+            - Marks visited cells as 0.5.
+            - Randomly explores directions.
+        - Removes walls between current and next cell.
+        """
         grid[coord_y, coord_x] = 0.5
         if (self.is_visited(coord_x, coord_y - 2, grid) and
            self.is_visited(coord_x, coord_y + 2, grid) and
@@ -109,11 +158,29 @@ class MazeGenerator(Cell):
                     self.generate(next_cell_x, next_cell_y, grid)
 
     def is_visited(self, x, y, grid):
+        """
+        Check if a cell has already been visited or is blocked.
+
+        Args:
+            x (int): X-coordinate.
+            y (int): Y-coordinate.
+            grid (np.ndarray): Maze grid.
+
+        Returns:
+            bool: True if cell is visited or out of bounds, False otherwise.
+        """
         if 0 < y < self.height and 0 < x < self.width:
             return grid[y, x] == 0.5 or grid[y, x] == 2
         return True
 
     def add_42_maze(self) -> None:
+        """
+        Embed a fixed '42' pattern into the maze.
+
+        The pattern is placed at the center of the maze
+        and marked with value 2,
+        making it unmodifiable during maze generation.
+        """
         if (self.maze is not None):
             coord_x = self.width // 2
             coord_y = self.height // 2
@@ -157,6 +224,12 @@ class MazeGenerator(Cell):
                 self.maze[coord_y + dy, coord_x + dx] = 2
 
     def generate_final_maze(self):
+        """
+        Convert the maze grid into a colored terminal representation.
+
+        Returns:
+            list[str]: List of strings, each representing a colored row.
+        """
         final_output = []
 
         for y in range(self.height):
@@ -182,6 +255,20 @@ class MazeGenerator(Cell):
         return final_output
 
     def _is_valid_position_set(self, position: tuple[int, int]) -> bool:
+        """
+        Validate and mark a position as entry or exit.
+
+        Args:
+            position (tuple[int, int]): Logical (y, x) position.
+
+        Returns:
+            bool: True if position is valid and set, False otherwise.
+
+        Notes:
+            - Converts logical coordinates to grid coordinates.
+            - Marks valid positions with value 3.
+            - Rejects positions overlapping protected areas (value 2).
+        """
         y, x = position
         x = (x * 2) + 1
         y = (y * 2) + 1
@@ -193,6 +280,14 @@ class MazeGenerator(Cell):
         return False
 
     def generate_hexa_maze(self):
+        """
+        Convert the maze into a hexadecimal string representation.
+
+        Each logical cell is encoded using bitwise wall information.
+
+        Returns:
+            list[str]: List of strings representing the maze in hex format.
+        """
         final_output = []
 
         for y in range(self.height):
@@ -216,6 +311,18 @@ class MazeGenerator(Cell):
         return final_output
 
     def deform_maze(self, coord_x, coord_y, grid):
+        """
+        Modify the maze to introduce loops (non-perfect maze).
+
+        Args:
+            coord_x (int): Starting x-coordinate (unused in loop).
+            coord_y (int): Starting y-coordinate (unused in loop).
+            grid (np.ndarray): Maze grid.
+
+        Notes:
+            - Breaks selected walls to create alternative paths.
+            - Avoids modifying protected cells (value 2).
+        """
         for coord_y in range(self.height - 2):
             for coord_x in range(self.width - 2):
                 if (self.maze[coord_y, coord_x] == 1 and not
@@ -224,6 +331,9 @@ class MazeGenerator(Cell):
 
 
 class Directions(Enum):
+    """
+    Enumeration of possible movement directions in the maze.
+    """
     UP = 1
     DOWN = 2
     LEFT = 3

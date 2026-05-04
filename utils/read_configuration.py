@@ -1,15 +1,14 @@
 import sys
 from .is_valid_keys import is_valid_keys
 
-"""
-Function for the read file that receive in sys.args
-
-The function return a Dict[str, str].
-If the mmandatory fields no has in the file the program is stop
-"""
-
 
 def read_configuration(path: str) -> dict[str, str]:
+    """
+    Function for the read file that receive in sys.args
+
+    The function return a Dict[str, str].
+    If the mmandatory fields no has in the file the program is stop
+    """
     # variable configuration of type Dict[str, str]
     configuration: dict[str, str] = {}
     # 'Try' block is used to run code if it the fails her run 'Exept'
