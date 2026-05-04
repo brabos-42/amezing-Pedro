@@ -125,7 +125,7 @@ def main() -> None:
         return
 
     values_config = read_configuration(sys.argv[1])
-    valuesReceiver = ValuesConfg(
+    values_receiver = ValuesConfg(
         width=int(values_config["WIDTH"]),
         height=int(values_config["HEIGHT"]),
         path=str(values_config["OUTPUT_FILE"]),
@@ -135,13 +135,16 @@ def main() -> None:
         seed=str(values_config['SEED'])
     )
 
-    gen = generate_maze(valuesReceiver, valuesReceiver.seed)
+    if (values_receiver.entry < 7 or values_receiver < 6):
+        print("The size too small")
+        sys.exit()
+
+    gen = generate_maze(values_receiver, values_receiver.seed)
     original_maze = copy.deepcopy(gen.maze)
     show_solution = False
     color_names = list(COLORS.keys())
     color_index = 0
     maze_color = COLORS[color_names[color_index]]
-
     display_maze(gen, maze_color)
 
     while True:
@@ -163,7 +166,7 @@ def main() -> None:
             continue
 
         if choice == 1:
-            gen = generate_maze(valuesReceiver, valuesReceiver.seed)
+            gen = generate_maze(values_receiver, values_receiver.seed)
             original_maze = copy.deepcopy(gen.maze)
             show_solution = False
             display_maze(gen, maze_color)
@@ -173,7 +176,17 @@ def main() -> None:
             show_solution = not show_solution
             gen.maze = copy.deepcopy(original_maze)
             if show_solution:
-                gen, resolution = apply_solution(gen, valuesReceiver)
+                gen, resolution = apply_solution(gen, values_receiver)
+                with open(values_receiver.path, "a") as f:
+                    for (cy, cx), (ncy, ncx) in zip(resolution, resolution[1:]):
+                        if (ncy > cy and ncx == cx):
+                            f.write("S")
+                        elif (ncy < cy and ncx == cx):
+                            f.write("N")
+                        elif (ncy == cy and ncx > cx):
+                            f.write("E")
+                        elif (ncy == cy and ncx < cx):
+                            f.write("W")
                 if resolution is None:
                     print("\n[!] No solution found!")
                     show_solution = False
@@ -189,7 +202,7 @@ def main() -> None:
             maze_color = COLORS[color_names[color_index]]
             gen.maze = copy.deepcopy(original_maze)
             if show_solution:
-                gen, resolution = apply_solution(gen, valuesReceiver)
+                gen, resolution = apply_solution(gen, values_receiver)
             display_maze(gen, maze_color)
             print(f"\n[+] Color changed to {color_names[color_index]}!")
 
