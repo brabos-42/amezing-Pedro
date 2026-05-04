@@ -93,7 +93,7 @@ class MazeGenerator(Cell):
             f.write("\n")
             x, y = self.entry
 
-        maze_lines = self.generate_final_maze()
+        maze_lines = self.generate_final_maze("\033[48;2;50;180;180m")
         for line in maze_lines:
             print(line)
 
@@ -223,7 +223,7 @@ class MazeGenerator(Cell):
             for dy, dx in offsets:
                 self.maze[coord_y + dy, coord_x + dx] = 2
 
-    def generate_final_maze(self):
+    def generate_final_maze(self, wall_color):
         """
         Convert the maze grid into a colored terminal representation.
 
@@ -231,13 +231,14 @@ class MazeGenerator(Cell):
             list[str]: List of strings, each representing a colored row.
         """
         final_output = []
+        color_wall = wall_color if wall_color else self._cell._color_wall
 
         for y in range(self.height):
             line = ""
             for x in range(self.width):
                 valor = self.maze[y, x]
                 if valor == 1:
-                    color =  self._cell._color_wall
+                    color =  color_wall
                 elif valor == 2:
                     color = "\033[48;2;118;68;98m"
                 elif valor == 0.5:

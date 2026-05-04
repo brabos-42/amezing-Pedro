@@ -1,19 +1,22 @@
 import sys
+import copy
 from utils import read_configuration, Solution
 from dataclasses import dataclass
 from algorithm import MazeGenerator
 import random
+from typing import Optional
 
 COLORS = {
-    "white":   "\033[97m",
-    "red":     "\033[91m",
-    "green":   "\033[92m",
-    "yellow":  "\033[93m",
-    "blue":    "\033[94m",
-    "magenta": "\033[95m",
-    "cyan":    "\033[96m",
+    "white":   "\033[48;2;200;200;200m",
+    "red":     "\033[48;2;180;50;50m",
+    "green":   "\033[48;2;50;150;50m",
+    "yellow":  "\033[48;2;180;180;50m",
+    "blue":    "\033[48;2;50;50;180m",
+    "magenta": "\033[48;2;150;50;150m",
+    "cyan":    "\033[48;2;50;180;180m",
 }
 RESET = "\033[0m"
+
 
 @dataclass
 class ValuesConfg:
@@ -24,43 +27,23 @@ class ValuesConfg:
     entry: tuple
     exit: tuple
     seed: str
-    """
-    Data container for maze configuration values.
-
-    Attributes:
-        width (int): Maze width (logical units).
-        height (int): Maze height (logical units).
-        path (str): Output file path.
-        perfect (bool): Whether to generate a perfect maze.
-        entry (tuple): Entry coordinates (row, col).
-        exit (tuple): Exit coordinates (row, col).
-        seed (str): Random seed for reproducibility.
-    """
 
 
 def entry_tuples(value: str) -> tuple[int, int]:
     """
-    Convert a string representation of coordinates into a tuple.
-
-    Args:
-        value (str): Coordinate string in the format "(y,x)".
-
-    Returns:
-        tuple[int, int]: Parsed (y, x) coordinates.
+        Pega o os valores em strings de tuples e transforma para tuples de fato
     """
-    return tuple(int(x) for x in value.replace('(', '').split(','))
+    parts = [
+        int(x.strip())
+        for x in value.replace('(', '').replace(')', '').split(',')
+        if x.strip()
+    ]
+    return (parts[0], parts[1])
 
 
 def parse_bool(value: str) -> bool:
     """
-    Convert a string to a boolean value.
-
-    Args:
-        value (str): Input string.
-
-    Returns:
-        bool: True if value represents a truthy string ("true", "1", "yes"),
-        False otherwise.
+        Pega o valor de entrada e virifica, transformando em boolean de acordo
     """
     return value.strip().lower() in ("true", "1", "yes")
 
@@ -83,7 +66,19 @@ def generate_maze(valuesReceiver, seed: str):
     return gen
 
 
-def apply_solution(gen, valuesReceiver):
+def apply_solution(gen, valuesReceiver) -> tuple[MazeGenerator, Optional[list[tuple[int, int]]]]:
+    """
+        função que aplica a solução do labirito chamando a Class Solution.
+        A class recebe valor de entrada e valor e o maze
+        e usar a função bfs_resolver para concluir. 
+
+        Essa função usa o algoritimo de bfs para resolver o labirinto, e ele retorna um lista
+        de tuplas para indicando o caminho.
+
+        pegamos o maze e usamos a nossa lista indicando a posiçao dos caminhos para 
+        mudar o valor das celular assim mudando a cor do caminho
+
+    """
     solution = Solution(valuesReceiver.entry, valuesReceiver.exit, gen.maze)
     resolution = solution.bfs_resolver()
     if resolution is None:
@@ -100,10 +95,11 @@ def apply_solution(gen, valuesReceiver):
     return gen, resolution
 
 
-def display_maze(gen, maze_color):
-    gen._set_color_wall(maze_color)
-    gen.generate_final_maze()
-    maze_lines = gen.generate_final_maze()
+def display_maze(gen, maze_color) -> None:
+    """
+        fução para exibir o maze passa a cor da parede como parametro
+    """
+    maze_lines = gen.generate_final_maze(wall_color=maze_color)
     for line in maze_lines:
         print(line)
     print(RESET)
@@ -111,21 +107,12 @@ def display_maze(gen, maze_color):
 
 def main() -> None:
     """
-    Main entry point for maze generation and solving.
+        Função inicial do nosso programa, ele rodar as validações dos valores inicias
+        Pega o arquivo  valida as campos, entradas, se passou o arquivo,
+        converte em parametro de um objeto
 
-    Workflow:
-        1. Read configuration file from command-line argument.
-        2. Parse configuration into a structured dataclass.
-        3. Validate dimensions and seed randomness.
-        4. Generate the maze.
-        5. Solve the maze using BFS.
-        6. Mark the solution path in the maze.
-        7. Print the colored maze.
-        8. Append movement directions (N, S, E, W) to the output file.
+        Roda o Ui no terminal para interação do usuario
 
-    Notes:
-        - Entry and exit positions are given in logical coordinates.
-        - The solution path is written as directional steps.
     """
     if len(sys.argv) != 2:
         print("Error need the file for generate")
@@ -143,14 +130,12 @@ def main() -> None:
     )
 
     gen = generate_maze(valuesReceiver, valuesReceiver.seed)
+    original_maze = copy.deepcopy(gen.maze)
     show_solution = False
     color_names = list(COLORS.keys())
     color_index = 0
     maze_color = COLORS[color_names[color_index]]
 
-
-    gen._set_color_wall("033[92m")
-    gen._cell._set_color_wall("\033[92m")
     display_maze(gen, maze_color)
 
     while True:
@@ -173,13 +158,14 @@ def main() -> None:
 
         if choice == 1:
             gen = generate_maze(valuesReceiver, valuesReceiver.seed)
+            original_maze = copy.deepcopy(gen.maze)
             show_solution = False
             display_maze(gen, maze_color)
             print("\n[+] Maze Regenerated!")
 
         elif choice == 2:
             show_solution = not show_solution
-            gen = generate_maze(valuesReceiver, valuesReceiver.seed)
+            gen.maze = copy.deepcopy(original_maze)
             if show_solution:
                 gen, resolution = apply_solution(gen, valuesReceiver)
                 if resolution is None:
@@ -187,20 +173,24 @@ def main() -> None:
                     show_solution = False
                 else:
                     display_maze(gen, maze_color)
-                    print(f"\n[+] Solution Shown!")
+                    print("\n[+] Solution Shown!")
             else:
                 display_maze(gen, maze_color)
-                print(f"\n[+] Solution Hidden!")
+                print("\n[+] Solution Hidden!")
 
         elif choice == 3:
             color_index = (color_index + 1) % len(color_names)
             maze_color = COLORS[color_names[color_index]]
+            gen.maze = copy.deepcopy(original_maze)
+            if show_solution:
+                gen, resolution = apply_solution(gen, valuesReceiver)
             display_maze(gen, maze_color)
             print(f"\n[+] Color changed to {color_names[color_index]}!")
 
         elif choice == 0:
             print(f"{RESET}Quitting...")
             break
+
 
 if __name__ == "__main__":
     main()
