@@ -66,16 +66,21 @@ def generate_maze(valuesReceiver, seed: str):
     return gen
 
 
-def apply_solution(gen, valuesReceiver) -> tuple[MazeGenerator, Optional[list[tuple[int, int]]]]:
+def apply_solution(gen, valuesReceiver) -> tuple[
+                                                 MazeGenerator,
+                                                 Optional[list[tuple[int, int]]
+                                                          ]]:
     """
         função que aplica a solução do labirito chamando a Class Solution.
         A class recebe valor de entrada e valor e o maze
         e usar a função bfs_resolver para concluir. 
 
-        Essa função usa o algoritimo de bfs para resolver o labirinto, e ele retorna um lista
+        Essa função usa o algoritimo de bfs para resolver o labirinto,
+        e ele retorna um lista
         de tuplas para indicando o caminho.
 
-        pegamos o maze e usamos a nossa lista indicando a posiçao dos caminhos para 
+        pegamos o maze e usamos a nossa lista indicando a posiçao dos
+        caminhos para 
         mudar o valor das celular assim mudando a cor do caminho
 
     """
@@ -85,12 +90,12 @@ def apply_solution(gen, valuesReceiver) -> tuple[MazeGenerator, Optional[list[tu
         return gen, None
 
     for i, (y, x) in enumerate(resolution):
-        gen.maze[y, x] = 3
+        gen.maze[y][x] = 3
         if i + 1 < len(resolution):
             ny, nx = resolution[i + 1]
             my, mx = resolution[i]
-            gen.maze[(y + ny) // 2, (x + nx) // 2] = 3
-            gen.maze[(y + my) // 2, (x + mx) // 2] = 3
+            gen.maze[(y + ny) // 2][(x + nx) // 2] = 3
+            gen.maze[(y + my) // 2][(x + mx) // 2] = 3
 
     return gen, resolution
 
@@ -107,8 +112,9 @@ def display_maze(gen, maze_color) -> None:
 
 def main() -> None:
     """
-        Função inicial do nosso programa, ele rodar as validações dos valores inicias
-        Pega o arquivo  valida as campos, entradas, se passou o arquivo,
+        Função inicial do nosso programa, ele rodar as validações dos valores
+        inicias Pega o arquivo  valida as campos, entradas,
+        se passou o arquivo,
         converte em parametro de um objeto
 
         Roda o Ui no terminal para interação do usuario
